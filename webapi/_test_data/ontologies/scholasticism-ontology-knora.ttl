@@ -1,0 +1,208 @@
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix owl: <http://www.w3.org/2002/07/owl#>.
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
+# @prefix skos: <http://www.w3.org/2004/02/skos/core#>.
+# @prefix dct: <http://purl.org/dc/terms/>.
+@prefix cidoc: <http://www.cidoc-crm.org/cidoc-crm/>.
+@prefix human: <http://www.knora.org/ontology/human#>.
+@prefix text: <http://www.knora.org/ontology/text#>.
+@prefix knora-base: <http://www.knora.org/ontology/knora-base#>.
+@prefix : <http://www.knora.org/ontology/scholasticism#>.
+
+<http://www.knora.org/ontology/scholasticism>
+	a owl:Ontology.
+#	dct:title "An ontology about Scholasticism"@en;
+#	dct:description """Formal description of elements in Scholasticism as the method of critical thought dominating * teaching by academics or scholastics (schoolmen) of universities in Europe from about 1100 to 1700."""@en;
+
+# * theological and philosophical study in Western Christianity
+
+#	dct:creator "Hans Cools, software developer, NIE, University of Basel, Switzerland"@en;
+#	dct:contibutor "Prof. Dr. Ueli Zahnd, History of Philosophy in the Middle Ages, University of Basel, Switzerland"@en.
+
+#
+# CLASSES
+#
+
+:Scholastic
+	a owl:Class;
+	rdfs:label "scholastic"@en, "ScholastikerIn"@de;
+	rdfs:comment """An adherent of Scholasticism."""@en;
+	rdfs:subClassOf human:Person, [
+#		a owl:Restriction; owl:onProperty :hasRole; owl:someValuesFrom :Role], [
+		a owl:Restriction; owl:onProperty :hasRole; owl:minCardinality "0"^^xsd:nonNegativeInteger], [
+		a owl:Restriction; owl:onProperty :hasRoleValue; owl:minCardinality "0"^^xsd:nonNegativeInteger].
+
+:Role # DB PL: RCS_REL_AID_XID - FUNCTION
+	a owl:Class;
+	rdfs:label "scholastic role"@en;
+	rdfs:comment """A role a scholastic has."""@en;
+	rdfs:subClassOf human:Role.
+#	owl:unionOf (text:Author :Reportator :Glossator :Abbreviator :Revisor :Redactor).
+
+
+# to do: seperate roles linked to expression and manifestation
+
+
+:Reportator # DB PL: RCS_REL_AID_XID - FUNCTION
+	a owl:Class;
+	rdfs:label "reportator"@la, "reportator"@en, "Reportator"@de;
+	rdfs:comment """Role of a scholastic student registering the content of a lesson."""@en;
+	rdfs:subClassOf :Role.
+
+:Glossator # DB PL: RCS_REL_AID_XID - FUNCTION
+	a owl:Class;
+	rdfs:label "glossator"@la, "glossator"@en, "Glossator"@de;
+	rdfs:comment """Role of a scholastic adding texts to a text."""@en;
+	rdfs:subClassOf :Role.
+
+:Abbreviator # DB PL: RCS_REL_AID_XID - FUNCTION
+	a owl:Class;
+	rdfs:label "abbreviator"@la, "abbreviator"@en, "Abkürzer"@de;
+	rdfs:comment """Role of a scholastic being responsible for a shortened version of a text."""@en;
+	rdfs:subClassOf :Role.
+
+:Revisor # DB PL: RCS_REL_AID_XID - FUNCTION
+	a owl:Class;
+	rdfs:label "revisor"@la, "revisor"@en, "Revisor"@de;
+	rdfs:comment """Role of a scholastic checking on certain aspects of a text."""@en;
+	rdfs:subClassOf :Role.
+
+:Redactor # DB PL: RCS_REL_AID_XID - FUNCTION
+	a owl:Class;
+	rdfs:label "redactor"@la, "redactor"@en, "Redactor"@de;
+	rdfs:comment """Role of a scholastic changing a text."""@en;
+	rdfs:subClassOf :Role.
+
+:Commentary # DB PL: RCS_XPRESSIONS
+	a owl:Class;
+	rdfs:label "commentarium scholasticum"@la, "scholastic commentary"@en, "scholastische Erläuterung"@de;
+	rdfs:comment """Commentary made by a scholastic."""@en;
+	rdfs:subClassOf text:Commentary, [
+		a owl:Restriction; owl:onProperty :hasMethod; owl:minCardinality "0"^^xsd:nonNegativeInteger], [
+		a owl:Restriction; owl:onProperty :hasMethodValue; owl:minCardinality "0"^^xsd:nonNegativeInteger].
+
+:CommentaryMethod
+	a owl:Class;
+	rdfs:label "scholastic commentary method"@en, "scholastische Erläuterungsmethode"@de;
+	rdfs:comment """Scholastic method to comment."""@en;
+	rdfs:subClassOf cidoc:E29_Design_or_Procedure, knora-base:Resource. # to do: subClassOf more general method
+
+:Lectura # DB PL: RCS_XPRESSIONS - TYPE
+	a owl:Class;
+	rdfs:label "lectura"@la;
+	rdfs:comment """Scholastic commentary on a text with a lectura method."""@en;
+	rdfs:subClassOf :CommentaryMethod.
+
+:LecturaRevisa # DB PL: RCS_XPRESSIONS - TYPE
+	a owl:Class;
+	rdfs:label "lectura revisa"@la;
+	rdfs:comment """Scholastic commentary on a text with a lectura revisa method."""@en;
+	rdfs:subClassOf :CommentaryMethod.
+
+:Reportatio # DB PL: RCS_XPRESSIONS - TYPE
+	a owl:Class;
+	rdfs:label "reportatio"@la;
+	rdfs:comment """Scholastic commentary on a text with a reportatio method."""@en;
+	rdfs:subClassOf :CommentaryMethod.
+
+:ReportatioApprobata # DB PL: RCS_XPRESSIONS - TYPE
+	a owl:Class;
+	rdfs:label "reportatio approbata"@la;
+	rdfs:comment """Scholastic commentary on a text with a reportatio approbata method."""@en;
+	rdfs:subClassOf :CommentaryMethod.
+
+:Ordinatio # DB PL: RCS_XPRESSIONS - TYPE
+	a owl:Class;
+	rdfs:label "ordinatio"@la;
+	rdfs:comment """Scholastic commentary on a text with an ordinatio method."""@en;
+	rdfs:subClassOf :CommentaryMethod.
+
+:Glosses # DB PL: RCS_XPRESSIONS - GENRES
+	a owl:Class;
+	rdfs:label "glosses"@en, "Glossen"@de;
+	rdfs:comment """Scholastic commentary on a text in the form of added texts."""@en;
+	rdfs:subClassOf :Commentary.
+
+:LiteralExposition # DB PL: RCS_XPRESSIONS - GENRES
+	a owl:Class;
+	rdfs:label "literal exposition"@en, "wörtliche Exposition"@de;
+	rdfs:comment """Scholastic commentary on a text in the form of literal exposition."""@en;
+	rdfs:subClassOf :Commentary.
+
+:Questions # DB PL: RCS_XPRESSIONS - GENRES
+	a owl:Class;
+	rdfs:label "questions"@en, "Fragen"@de;
+	rdfs:comment """Scholastic commentary on a text in the form of questions."""@en;
+	rdfs:subClassOf :Commentary.
+
+:Abbreviation # DB PL: RCS_XPRESSIONS - GENRES
+	a owl:Class;
+	rdfs:label "abbreviation"@en, "Abkürzung"@de;
+	rdfs:comment """Scholastic commentary on a text in the form of a shortened version."""@en;
+	rdfs:subClassOf :Commentary.
+
+:Paraphrase # DB PL: RCS_XPRESSIONS - GENRES
+	a owl:Class;
+	rdfs:label "paraphrase"@en, "Paraphrase"@de;
+	rdfs:comment """Scholastic commentary on a text in the form of a restatement of a text to clarify meaning."""@en;
+	rdfs:subClassOf :Commentary.
+
+:Table # DB PL: RCS_XPRESSIONS - GENRES
+	a owl:Class;
+	rdfs:label "table"@en, "Tabelle"@de;
+	rdfs:comment """Scholastic commentary on a text in the form of added information in a table."""@en;
+	rdfs:subClassOf :Commentary.
+
+:Metric # DB PL: RCS_XPRESSIONS - GENRES
+	a owl:Class;
+	rdfs:label "metric"@en, "Metrik"@de;
+	rdfs:comment """Scholastic commentary on a text in the form of added metric information."""@en;
+	rdfs:subClassOf :Commentary.
+
+:Syllogisms # DB PL: RCS_XPRESSIONS - GENRES
+	a owl:Class;
+	rdfs:label "syllogisms"@en, "Syllogismen"@de;
+	rdfs:comment """Scholastic commentary on a text in the form of syllogisms."""@en;
+	rdfs:subClassOf :Commentary.
+
+:Conclusion # DB PL: RCS_XPRESSIONS - GENRES
+	a owl:Class;
+	rdfs:label "conclusions"@en, "Schlussfolgerungen"@de;
+	rdfs:comment """Scholastic commentary on a text in the form of conclusions."""@en;
+	rdfs:subClassOf :Commentary.
+
+#
+# PROPERTIES
+#
+
+:hasRole
+	a owl:ObjectProperty;
+	rdfs:label "has role"@en,  "hat Rolle"@de;
+	rdfs:comment """Relating a scholastic to a role s/he has."""@en;
+	rdfs:subPropertyOf knora-base:hasLinkTo;
+	knora-base:subjectClassConstraint :Scholastic;
+	knora-base:objectClassConstraint :Role.
+
+:hasRoleValue
+	a owl:ObjectProperty;
+	rdfs:label "has role statement"@en, "hat Rolle-Aussage"@de;
+	rdfs:comment """Relating a scholastic to a statement as reification of the relation between the scholastic and a role."""@en;
+	rdfs:subPropertyOf knora-base:hasLinkToValue;
+	knora-base:subjectClassConstraint :Scholastic;
+	knora-base:objectClassConstraint knora-base:LinkValue.
+
+:hasMethod
+	a owl:ObjectProperty;
+	rdfs:label "commentary has method"@en;
+	rdfs:comment """Relating a scholastic commentary to a method it adheres to."""@en;
+	rdfs:subPropertyOf knora-base:hasLinkTo;
+	knora-base:subjectClassConstraint :Commentary;
+	knora-base:objectClassConstraint :CommentaryMethod.
+
+:hasMethodValue
+	a owl:ObjectProperty;
+	rdfs:label "commentary has method statement"@en;
+	rdfs:comment """Relating a scholastic commentary to a statement as reification of the relation between the scholastic commentary and a method it adheres to."""@en;
+	rdfs:subPropertyOf knora-base:hasLinkToValue;
+	knora-base:subjectClassConstraint :Commentary;
+	knora-base:objectClassConstraint knora-base:LinkValue.

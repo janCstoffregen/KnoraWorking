@@ -1,0 +1,71 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix owl: <http://www.w3.org/2002/07/owl#>.
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
+# @prefix skos: <http://www.w3.org/2004/02/skos/core#>.
+# @prefix dct: <http://purl.org/dc/terms/>.
+@prefix cidoc: <http://www.cidoc-crm.org/cidoc-crm/>.
+# @prefix frbroo: <http://iflastandards.info/ns/fr/frbr/frbroo/>.
+@prefix text: <http://www.knora.org/ontology/text#>.
+@prefix knora-base: <http://www.knora.org/ontology/knora-base#>.
+# @prefix salsah-gui: <http://www.knora.org/ontology/salsah-gui>.
+@prefix : <http://www.knora.org/ontology/image#>.
+
+<http://www.knora.org/ontology/image>
+	a owl:Ontology.
+#	dct:title "An ontology about image"@en;
+#	dct:description """Formal description of image as a visual resource in the broadest sense, its general subclasses, related classes, and properties."""@en;
+#	dct:creator "Hans Cools, software developer, NIE, Basel University, Switzerland"@en;
+
+#
+# CLASSES
+#
+
+:Image
+	a owl:Class;
+	rdfs:label "image"@en,"Bild"@de;
+	rdfs:comment """2-dimensional representation of a resource."""@en;
+	rdfs:subClassOf cidoc:E38_Image, knora-base:Resource, [ # subClassOf cidoc:E36_Visual_Item subClassOf cidoc:E73_Information_Object
+		a owl:Restriction; owl:onProperty text:hasTitle; owl:minCardinality "0"^^xsd:nonNegativeInteger].
+
+:Photograph
+	a owl:Class;
+	rdfs:label "photograph"@en,"Foto"@de;
+	rdfs:comment """Image made by exposing a photosensitive surface to light."""@en;
+	rdfs:subClassOf :Image, knora-base:StillImageRepresentation.
+
+#
+# PROPERTIES
+#
+
+:hasImage
+	a owl:ObjectProperty;
+	rdfs:label "has image";
+	rdfs:comment """Relating a resource to an image thereof."""@en;
+	rdfs:subPropertyOf knora-base:hasLinkTo;
+	rdfs:subjectClassConstraint knora-base:Resource;
+	rdfs:objectClassConstraint :Image.
+
+:hasImageValue
+	a owl:ObjectProperty;
+	rdfs:label "has image value";
+	rdfs:comment """Relating a resource to a reification statement of the relation between the resource and an image thereof."""@en;
+	rdfs:subPropertyOf knora-base:hasLinkToValue;
+	rdfs:subjectClassConstraint knora-base:Resource;
+	rdfs:objectClassConstraint knora-base:LinkValue.
+
+:hasPhotoRepresentation
+	a owl:ObjectProperty;
+	rdfs:label "has photograph representation"@en, "hat Foto-Repräsentation"@de;
+	rdfs:comment """Relating a resource to a photograph thereof."""@en;
+	rdfs:subPropertyOf cidoc:P138i_has_representation, knora-base:hasRepresentation;
+	knora-base:subjectClassConstraint knora-base:Resource;
+	knora-base:objectClassConstraint :Photograph.
+
+:hasPhotoRepresentationValue
+	a owl:ObjectProperty;
+	rdfs:label "has photograph representation value"@en;
+	rdfs:comment """Relating a resource to a reification statement of the relation between the resource and a photograph thereof."""@en;
+	rdfs:subPropertyOf knora-base:hasRepresentationValue;
+	knora-base:subjectClassConstraint knora-base:Resource;
+	knora-base:objectClassConstraint knora-base:LinkValue.

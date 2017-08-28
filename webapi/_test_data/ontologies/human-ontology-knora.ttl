@@ -1,0 +1,331 @@
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix owl: <http://www.w3.org/2002/07/owl#>.
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
+#@prefix skos: <http://www.w3.org/2004/02/skos/core#>.
+#@prefix dct: <http://purl.org/dc/terms/>.
+#@prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>.
+@prefix foaf: <http://xmlns.com/foaf/0.1/>.
+@prefix unicore: <http://purl.uniprot.org/core/>.
+@prefix frbroo: <http://iflastandards.info/ns/fr/frbr/frbroo/>.
+#@prefix event: <http://www.knora.org/ontology/event#>.
+@prefix text: <http://www.knora.org/ontology/text#>.
+@prefix knora-base: <http://www.knora.org/ontology/knora-base#>.
+#@prefix salsah-gui: <http://www.knora.org/ontology/salsah-gui#>.
+@prefix : <http://www.knora.org/ontology/human#>.
+
+<http://www.knora.org/ontology/human>
+	a owl:Ontology.
+#	dct:title "An ontology about human"@en;
+#	dct:description """Formal description of a human, general subclasses, related classes and properties."""@en;
+#	dct:creator "Hans Cools, software developer, NIE, Basel University, Switzerland"@en.
+
+#
+# CLASSES
+#
+
+:Human
+	a owl:Class; # , unicore:Taxon;
+	rdfs:label "human"@en, "Mensch"@de, "homme"@fr;
+	rdfs:comment """Member of the subspecies Homo sapiens sapiens."""@en;
+#	skos:note """A human lives but is not necessarily born; one can speak about a human embryo or foetus.""";
+	unicore:scientificName """Homo sapiens sapiens"""@en;
+	unicore:rank unicore:Subspecies;
+	rdfs:subClassOf foaf:Agent, knora-base:Resource, <http://purl.uniprot.org/taxonomy/9606>. # SCO foaf:Agent; species Homo sapiens; agent:Agent
+
+:Person # DB PL: RCS_AUTHORS
+	a owl:Class;
+	rdfs:label "person"@en, "Person"@de, "personne"@fr, "persona"@it;
+	rdfs:comment """A real born living human."""@en;
+#	skos:note """A foaf:Person class member is born, but can be alive or dead, real or imaginary. In this more restricted meaning a person can do things during life and can be talked about after dead, having done things during life. An imaginary person is a thing that can have every conceivable property, very unlike a real person."""@en;
+	rdfs:subClassOf :Human, foaf:Person, frbroo:F10_Person, knora-base:Resource, [
+#		a owl:Restriction; owl:onProperty :hasBiologicalGender; owl:someValuesFrom :BiologicalGender], [
+		a owl:Restriction; owl:onProperty :hasBiologicalGender; owl:maxCardinality "1"^^xsd:nonNegativeInteger], [
+		a owl:Restriction; owl:onProperty :hasBiologicalGenderValue; owl:maxCardinality "1"^^xsd:nonNegativeInteger], [
+		a owl:Restriction; owl:onProperty :hasName; owl:minCardinality "0"^^xsd:nonNegativeInteger], [
+		a owl:Restriction; owl:onProperty :hasFamilyName; owl:minCardinality "0"^^xsd:nonNegativeInteger], [ # person can have name legally changed; extra restriction with rule: strict 1 name simultaneously
+		a owl:Restriction; owl:onProperty :hasGivenName; owl:minCardinality "0"^^xsd:nonNegativeInteger], [ # person can have name legally changed; extra restriction with rule: strict 1 name simultaneously
+		a owl:Restriction; owl:onProperty :hasPreferredName; owl:minCardinality "0"^^xsd:nonNegativeInteger], [
+		a owl:Restriction; owl:onProperty :hasAlias; owl:minCardinality "0"^^xsd:nonNegativeInteger], [
+		a owl:Restriction; owl:onProperty :hasBirthDate; owl:minCardinality "0"^^xsd:nonNegativeInteger], [ # there can be more than 1 time indicator; an overall certainty period can be calculated
+		a owl:Restriction; owl:onProperty :hasDeathDate; owl:minCardinality "0"^^xsd:nonNegativeInteger], [ # there can be more than 1 time indicator; an overall certainty period can be calculated
+		a owl:Restriction; owl:onProperty :hasDescription; owl:minCardinality "0"^^xsd:nonNegativeInteger], [
+#		a owl:Restriction; owl:onProperty :hasRole; owl:someValuesFrom :Role], [
+		a owl:Restriction; owl:onProperty :hasRole; owl:minCardinality "0"^^xsd:nonNegativeInteger], [
+		a owl:Restriction; owl:onProperty :hasRoleValue; owl:minCardinality "0"^^xsd:nonNegativeInteger], [
+		a owl:Restriction; owl:onProperty :hasFloruit; owl:minCardinality "0"^^xsd:nonNegativeInteger], [
+		a owl:Restriction; owl:onProperty :hasFloruitValue; owl:minCardinality "0"^^xsd:nonNegativeInteger].
+
+:PersonLike # can also be :Fantasy
+	a owl:Class;
+	rdfs:label "person-like resource"@en;
+	rdfs:comment """Person like resource having additional non-human features."""@en;
+#	skos:note """E.g. Jesus is for a believer a person having also non-human features, i.e. he is in the intersection of :Person and :PersonLike."""@en;
+#	OR has this kind of stuff be left out of modeling altogether?
+#	rdfs:isDefinedBy <http://www.knora.org/ontology/human#>.
+	rdfs:subClassOf :Person.
+
+:NameObject # part of DB PL: RCS_AUTHORS - NAME
+	a owl:Class;
+	rdfs:label "name object";
+	rdfs:comment "Name of a person, as an object.";
+#	skos:note """Enabling speaking about a name as object, not as literal."""@en;
+#	skos:note """Further restriction given along specific law; e.g. a person can have name legally changed, thus can have only 1 simultaneously."""@en;
+	rdfs:subClassOf text:Name. # SCO text:TextObject SCO knora-base:TextValue
+
+:FamilyNameObject
+	a owl:Class;
+	rdfs:label "family name object";
+	rdfs:comment "Name of a person, as an object, from one or both parents.";
+#	skos:note """Enabling speaking about a family name as object, not as literal."""@en;
+#	skos:note """Further restriction given along specific law; e.g. a person can have name legally changed, thus can have only 1 simultaneously."""@en;
+	rdfs:subClassOf :Name. # SCO text:TextObject SCO knora-base:TextValue
+
+:GivenName
+	a owl:Class;
+	rdfs:label "given name object";
+	rdfs:comment "Name, as an object, given to a person, usually by one or both parents.";
+#	skos:note """Enabling speaking about a given name as object, not as literal."""@en;
+#	skos:note """Further restriction given along specific law; e.g. a person can have name legally changed, thus can have only 1 simultaneously."""@en;
+	rdfs:subClassOf :Name. # SCO text:TextObject SCO knora-base:TextValue
+
+:Description # part of DB PL: RCS_AUTHORS - NOTES
+	a owl:Class;
+	rdfs:label "description object";
+	rdfs:comment "Description of a person, as an object.";
+#	skos:note """Enabling speaking about a person description as object, not as literal."""@en;
+	rdfs:subClassOf text:Description. # SCO text:TextObject SCO knora-base:TextValue
+#	add person as described object
+
+:Action
+	a owl:Class;
+	rdfs:label "action"@en;
+	rdfs:comment """Action with at least one human as agent."""@en;
+	rdfs:subClassOf knora-base:Resource. #  subClassOf event:Action
+
+:Life
+	a owl:Class;
+	rdfs:label "person's life"@en;
+	rdfs:comment """Life of a human from birth until death."""@en;
+	rdfs:comment """Considered as an action wherein a person is an agent."""@en;
+#	skos:note """No satisfying biological description of onset of a human life."""@en;
+	rdfs:subClassOf knora-base:Resource. # event:Action, event:Existence
+
+:BiologicalGender
+	a owl:Class;
+	rdfs:label "biological gender"@en;
+	rdfs:comment """Biological gender of a human."""@en;
+	rdfs:subClassOf knora-base:Resource.
+#	owl:disjointUnionOf (:FemaleGender :IntersexualGender :MaleGender).
+
+:FemaleGender
+	a owl:Class;
+	rdfs:label "female"@en;
+	rdfs:comment """Being of a human female gender."""@en;
+#	rdfs:isDefinedBy <http://www.nie-ine.ch/ontology/human#>;
+	rdfs:subClassOf :BiologicalGender.
+
+:MaleGender
+	a owl:Class;
+	rdfs:label "male"@en;
+	rdfs:comment """Being of a human male gender."""@en;
+#	skos:note """In adulthood producing spermatozoa for fertilizing female ova."""@en;
+#	rdfs:isDefinedBy <http://www.nie-ine.ch/ontology/human#>;
+	rdfs:subClassOf :BiologicalGender.
+
+#:IntersexualGender
+#	a owl:Class;
+#	rdfs:label """intersexual"""@en;
+#	rdfs:comment """Being of a gender that is neither male or female, with biological characteristics of both."""@en;
+#	rdfs:isDefinedBy <http://www.nie-ine.ch/ontology/human#>;
+#	rdfs:subClassOf :BiologicalGender.
+
+:Role
+	a owl:Class;
+	rdfs:label "role"@en;
+	rdfs:comment """A role a person has as a social entity."""@en;
+	rdfs:subClassOf knora-base:Resource. # , [
+#		a owl:Restriction; owl:onProperty agent:roleOf; owl:allValuesFrom :Person].
+
+:Occupation
+	a owl:Class;
+	rdfs:label "occupation"@en;
+	rdfs:comment """Action serving as a person's regular source of livelihood."""@en;
+	rdfs:subClassOf knora-base:Resource. # SCO event:Action.
+
+:OccupationalRole
+	a owl:Class;
+	rdfs:label "occupational role"@en;
+	rdfs:comment """Role of a person in an occupation."""@en;
+	rdfs:subClassOf :Role.
+
+:Floruit # move to agent:
+	a owl:Class;
+	rdfs:label "floruit"@en;
+	rdfs:comment """Period during which a person lived or a school or movement was most active or flourishing."""@en;
+	rdfs:subClassOf knora-base:Resource. # SCO event:Action.
+
+#
+# PROPERTIES
+#
+
+:actsIn
+	a owl:ObjectProperty;
+	rdfs:label "person acts in"@en;
+	rdfs:comment """Relating a person to an action s/he is in."""@en;
+	rdfs:subPropertyOf knora-base:hasLinkTo; # SPO agent:actsIn
+	knora-base:subjectClassConstraint :Person;
+	knora-base:objectClassConstraint :Action.
+
+:actsInValue
+	a owl:ObjectProperty;
+	rdfs:label "person acts in, as statement"@en;
+	rdfs:comment """Relating a person to a reification statement of the relation between the person and an action s/he is in."""@en;
+	rdfs:subPropertyOf knora-base:hasLinkToValue;
+	knora-base:subjectClassConstraint :Person;
+	knora-base:objectClassConstraint knora-base:LinkValue.
+
+:hasLife
+	a owl:ObjectProperty;
+	rdfs:label "person has life"@en;
+	rdfs:comment """Relating a person to her/his life."""@en;
+	rdfs:subPropertyOf :actsIn;
+	knora-base:subjectClassConstraint :Person;
+	knora-base:objectClassConstraint :Life.
+
+:hasLifeValue
+	a owl:ObjectProperty;
+	rdfs:label "person has life, as statement"@en;
+	rdfs:comment """Relating a person to a reification statement of the relation between the person and her/his life."""@en;
+	rdfs:subPropertyOf :actsInStatement;
+	knora-base:subjectClassConstraint :Person;
+	knora-base:objectClassConstraint knora-base:LinkValue.
+
+:hasBiologicalGender
+	a owl:ObjectProperty;
+	rdfs:label "has biological gender"@en;
+	rdfs:comment """Relating a human to a biological gender."""@en;
+	rdfs:subPropertyOf knora-base:hasLinkTo;
+	knora-base:subjectClassConstraint :Human;
+	knora-base:objectClassConstraint :BiologicalGender.
+
+:hasBiologicalGenderValue
+	a owl:ObjectProperty;
+	rdfs:label "person has biological gender, as statement"@en;
+	rdfs:comment """Relating a person to a reification statement of the relation between the person and her/his biological gender."""@en;
+	rdfs:subPropertyOf knora-base:hasLinkToValue;
+	knora-base:subjectClassConstraint :Person;
+	knora-base:objectClassConstraint knora-base:LinkValue.
+
+:hasBirthDate
+	a owl:ObjectProperty;
+	rdfs:label "has birth date"@en;
+	rdfs:comment """Relating a person to her/his date of birth as object. It is possible to find different birth dates in different historical sources."""@en;
+	rdfs:subPropertyOf knora-base:hasValue;
+	knora-base:subjectClassConstraint :Person;
+	knora-base:objectClassConstraint knora-base:DateValue.
+
+
+
+:hasDeathDate
+	a owl:ObjectProperty;
+	rdfs:label "has death date"@en;
+	rdfs:comment """Relating a person to her/his date of death as object. It is possible to find different birth dates in different historical sources."""@en;
+	rdfs:subPropertyOf knora-base:hasValue;
+	knora-base:subjectClassConstraint :Person;
+	knora-base:objectClassConstraint knora-base:DateValue.
+
+:hasName # DB PL: RCS_AUTHORS - NAME
+	a owl:ObjectProperty;
+	rdfs:label "has name";
+	rdfs:comment """Relating a person to her/his name as object."""@en;
+	rdfs:subPropertyOf text:hasName;
+	knora-base:subjectClassConstraint :Person;
+	knora-base:objectClassConstraint :Name.
+
+:hasFamilyName
+	a owl:ObjectProperty;
+	rdfs:label "has family name";
+	rdfs:comment """Relating a person to her/his family name as object."""@en;
+	rdfs:subPropertyOf :hasName;
+	knora-base:subjectClassConstraint :Person;
+	knora-base:objectClassConstraint :FamilyName.
+
+:hasGivenName
+	a owl:ObjectProperty;
+	rdfs:label "has given name";
+	rdfs:comment """Relating a person to her/his given name as object."""@en;
+	rdfs:subPropertyOf :hasName;
+	knora-base:subjectClassConstraint :Person;
+	knora-base:objectClassConstraint :GivenName.
+
+:hasPreferredName # besides text:hasPreferredNameObject for searching
+	a owl:ObjectProperty;
+	rdfs:label "has preferred name";
+	rdfs:comment """Relating a person to her/his preferred name as object."""@en;
+	rdfs:subPropertyOf text:hasPreferredName;
+	knora-base:subjectClassConstraint :Person;
+	knora-base:objectClassConstraint text:PreferredName.
+
+:hasAlias
+	a owl:ObjectProperty;
+	rdfs:label "has alias";
+	rdfs:comment """Relating a person to an alias as object."""@en;
+	rdfs:subPropertyOf text:hasAlias;
+	knora-base:subjectClassConstraint :Person;
+	knora-base:objectClassConstraint text:Alias.
+
+:hasDescription
+	a owl:ObjectProperty;
+	rdfs:label "has description"@en;
+	rdfs:comment """Relating a person to a description as object."""@en;
+	rdfs:subPropertyOf text:hasDescription;
+	knora-base:subjectClassConstraint :Person;
+	knora-base:objectClassConstraint :Description.
+
+:hasRole
+	a owl:ObjectProperty;
+	rdfs:label "has role"@en, "hat Rolle"@de;
+	rdfs:comment """Relating a person to a role."""@en;
+	rdfs:subPropertyOf knora-base:hasLinkTo;
+	knora-base:subjectClassConstraint :Person;
+	knora-base:objectClassConstraint :Role.
+
+:hasRoleValue
+	a owl:ObjectProperty;
+	rdfs:label "has role, as statement"@en, "Person hat Rolle, als Aussage"@de;
+	rdfs:comment """Relating a person to a reification statement of the relation between the person and a role."""@en;
+	rdfs:subPropertyOf knora-base:hasLinkToValue;
+	knora-base:subjectClassConstraint :Person;
+	knora-base:objectClassConstraint knora-base:LinkValue.
+
+:hasOccupationalRole
+	a owl:ObjectProperty;
+	rdfs:label "has occupational role"@en;
+	rdfs:comment """Relating a person to an actual occupational role."""@en;
+	rdfs:subPropertyOf :hasRole;
+	knora-base:subjectClassConstraint :Person;
+	knora-base:objectClassConstraint :OccupationalRole.
+
+:hasOccupationalRoleValue
+	a owl:ObjectProperty;
+	rdfs:label "has occupational role, as statement"@en;
+	rdfs:comment """Relating a person to a reification statement of the relation between the person and an occupational role."""@en;
+	rdfs:subPropertyOf :hasRoleStatement;
+	knora-base:subjectClassConstraint :Person;
+	knora-base:objectClassConstraint knora-base:LinkValue.
+
+:hasFloruit
+	a owl:ObjectProperty;
+	rdfs:label "has floruit"@en;
+	rdfs:comment """Relating a person to her/his floruit."""@en;
+	rdfs:subPropertyOf :actsIn;
+	knora-base:subjectClassConstraint :Person;
+	knora-base:objectClassConstraint :Floruit.
+
+:hasFloruitValue
+	a owl:ObjectProperty;
+	rdfs:label "has floruit, as statement"@en;
+	rdfs:comment """Relating a person to a reification statement of the relation between the person and her/his floruit."""@en;
+	rdfs:subPropertyOf :actsInValue;
+	knora-base:subjectClassConstraint :Person;
+	knora-base:objectClassConstraint knora-base:LinkValue.

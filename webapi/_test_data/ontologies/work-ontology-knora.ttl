@@ -1,0 +1,141 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix owl: <http://www.w3.org/2002/07/owl#>.
+@prefix xml: <http://www.w3.org/XML/1998/namespace>.
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
+#@prefix skos: <http://www.w3.org/2004/02/skos/core#>.
+#@prefix dct: <http://purl.org/dc/terms/>.
+@prefix foaf: <http://xmlns.com/foaf/0.1/>.
+@prefix cidoc: <http://www.cidoc-crm.org/cidoc-crm/>.
+@prefix frbroo: <http://iflastandards.info/ns/fr/frbr/frbroo/>.
+@prefix text: <http://www.knora.org/ontology/text#>.
+@prefix image: <http://www.knora.org/ontology/image#>.
+@prefix knora-base: <http://www.knora.org/ontology/knora-base#>.
+@prefix : <http://www.knora.org/ontology/work#>.
+
+<http://www.knora.org/ontology/work>
+	a owl:Ontology.
+#	dct:title "An ontology about work as intellectual product"@en;
+#	dct:description """Formal description of work as intellectual product, its general subclasses, related classes and properties, as described in the ontology Functional Requirements for Bibliographic Records, object oriented."""@en;
+#	owl:versionInfo "Version x - yyyy-mm-dd"@en; # OR other format, datatype
+#	dct:creator "Hans Cools, software developer, NIE, Basel University, Switzerland"@en.
+
+#
+# CLASSES
+#
+
+:Work
+	a owl:Class;
+	rdfs:label "work"@en, "Werk"@de;
+	rdfs:comment """Intellectual product as an abstract conceptual thing"""@en;
+	rdfs:comment """See http://iflastandards.info/ns/fr/frbr/frbroo/F1_Work."""@en; 
+	rdfs:subClassOf frbroo:F1_Work, knora-base:Resource, [
+		a owl:Restriction; owl:onProperty text:hasTitle; owl:minCardinality "0"^^xsd:nonNegativeInteger], [
+		a owl:Restriction; owl:onProperty :expressedIn; owl:minCardinality "0"^^xsd:nonNegativeInteger], [
+		a owl:Restriction; owl:onProperty :expressedInValue; owl:minCardinality "0"^^xsd:nonNegativeInteger].
+
+:MonoWork
+	a owl:Class;
+	rdfs:label "individual work"@en, "individuelles Werk"@de;
+	rdfs:comment """See http://iflastandards.info/ns/fr/frbr/frbroo/F14_Individual_Work."""@en;
+	rdfs:subClassOf :Work, frbroo:F14_Individual_Work.
+
+:Expression
+	a owl:Class;
+	rdfs:label "expression"@en, "Expression"@de;
+	rdfs:comment """See http://iflastandards.info/ns/fr/frbr/frbroo/F22_Self-Contained_Expression and http://iflastandards.info/ns/fr/frbr/frbroo/F2_Expression."""@en;
+	rdfs:subClassOf frbroo:F22_Self-Contained_Expression, knora-base:Resource, [
+		a owl:Restriction; owl:onProperty text:hasTitle; owl:minCardinality "0"^^xsd:nonNegativeInteger], [
+		a owl:Restriction; owl:onProperty text:hasAlias; owl:minCardinality "0"^^xsd:nonNegativeInteger], [
+		a owl:Restriction; owl:onProperty text:hasDescription; owl:minCardinality "0"^^xsd:nonNegativeInteger], [
+		a owl:Restriction; owl:onProperty :materializedIn; owl:minCardinality "0"^^xsd:nonNegativeInteger], [
+		a owl:Restriction; owl:onProperty :materializedInValue; owl:minCardinality "0"^^xsd:nonNegativeInteger].
+
+:Manifestation
+ 	a owl:Class;
+ 	rdfs:label "manifestation"@en,"Manifestation"@de;
+ 	rdfs:comment """Carrier of an expression."""@en;
+#	skos:note """Includes both the F4_Manifestation_Singleton and F5_Item as declared in FRBROO."""@en;
+	rdfs:subClassOf cidoc:E84_Information_Carrier, knora-base:Resource, [
+		a owl:Restriction; owl:onProperty text:hasTitle; owl:minCardinality "0"^^xsd:nonNegativeInteger], [
+		a owl:Restriction; owl:onProperty text:hasDescription; owl:minCardinality "0"^^xsd:nonNegativeInteger], [
+		a owl:Restriction; owl:onProperty image:hasPhotoRepresentation; owl:minCardinality "0"^^xsd:nonNegativeInteger], [
+		a owl:Restriction; owl:onProperty image:hasPhotoRepresentationValue; owl:minCardinality "0"^^xsd:nonNegativeInteger].
+
+:Print
+	a owl:Class;
+	rdfs:label "print"@en, "Druck"@de;
+	rdfs:comment """An expression printed on a carrier."""@en;
+	rdfs:subClassOf :Manifestation, frbroo:F5_Item.
+
+:Publication
+	a owl:Class;
+	rdfs:label "publication"@en, "Publikation"@de;
+	rdfs:comment """An expression published on a carrier."""@en;
+	rdfs:subClassOf :Manifestation, frbroo:F5_Item.
+
+:PrintedPublication
+	a owl:Class;
+	rdfs:label "printed publication"@en, "gedruckte Publikation"@de;
+	rdfs:comment """Publication as print."""@en;
+	rdfs:subClassOf :Print, :Publication.
+
+:ElectronicPublication
+	a owl:Class;
+	rdfs:label "electronic publication"@en, "elektronische Publikation"@de;
+	rdfs:comment """Publication on an electronic carrier."""@en;
+	rdfs:subClassOf :Publication.
+
+#
+# PROPERTIES
+#
+
+:expressedIn
+	a owl:ObjectProperty;
+	rdfs:label "expressed in"@en;
+	rdfs:comment "Relating an individual work to an expression tehreof."@en;
+	rdfs:subPropertyOf frbroo:R9_is_realised_in, knora-base:hasLinkTo;
+	knora-base:subjectClassConstraint :MonoWork;
+	knora-base:objectClassConstraint :Expression.
+
+:expressedInValue
+	a owl:ObjectProperty;
+	rdfs:label "expressed in value"@en;
+	rdfs:comment "Relating an individual work to a reification statement of the relation between the individual work and an expression tehreof."@en;
+	rdfs:subPropertyOf knora-base:hasLinkToValue;
+	knora-base:subjectClassConstraint :MonoWork;
+	knora-base:objectClassConstraint knora-base:LinkValue.
+
+# frbroo:R3_is_realised_in: more general: frbroo:F1_Work - frbroo:F22_Self-Contained_Expression
+
+:materializedIn
+	a owl:ObjectProperty;
+	rdfs:label "materialized in"@en;
+	rdfs:comment "Relating an expression to a manifestation tehreof."@en;
+	rdfs:subPropertyOf knora-base:hasLinkTo;
+	knora-base:subjectClassConstraint :Expression;
+	knora-base:objectClassConstraint :Manifestation.
+
+:materializedInValue
+	a owl:ObjectProperty;
+	rdfs:label "materialized in value"@en;
+	rdfs:comment "Relating an expression to a reification statement of the relation between the expression and a manifestation tehreof."@en;
+	rdfs:subPropertyOf knora-base:hasLinkToValue;
+	knora-base:subjectClassConstraint :Expression;
+	knora-base:objectClassConstraint knora-base:LinkValue.
+
+:publishedAs
+	a owl:ObjectProperty;
+	rdfs:label "published as"@en;
+	rdfs:comment "Relating an expression to a publication tehreof."@en;
+	rdfs:subPropertyOf knora-base:hasLinkTo;
+	knora-base:subjectClassConstraint :Expression;
+	knora-base:objectClassConstraint :Publication.
+
+:publishedAsValue
+	a owl:ObjectProperty;
+	rdfs:label "published as value"@en;
+	rdfs:comment "Relating an expression to a reification statement of the relation between the expression and a publication tehreof."@en;
+	rdfs:subPropertyOf knora-base:hasLinkToValue;
+	knora-base:subjectClassConstraint :Expression;
+	knora-base:objectClassConstraint knora-base:LinkValue.
